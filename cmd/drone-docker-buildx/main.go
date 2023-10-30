@@ -6,12 +6,11 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/owncloud-ci/drone-docker-buildx/plugin"
 	"github.com/sirupsen/logrus"
-	"github.com/thegeeklab/drone-docker-buildx/plugin"
 	"github.com/urfave/cli/v2"
 
-	"github.com/thegeeklab/drone-plugin-lib/v2/drone"
-	"github.com/thegeeklab/drone-plugin-lib/v2/urfave"
+	"github.com/drone-plugins/drone-plugin-lib/urfave"
 )
 
 //nolint:gochecknoglobals
@@ -37,7 +36,7 @@ func main() {
 		Name:    "drone-docker-buildx",
 		Usage:   "build docker container with DinD and buildx",
 		Version: BuildVersion,
-		Flags:   append(settingsFlags(settings, urfave.FlagsPluginCategory), urfave.Flags()...),
+		Flags:   append(settingsFlags(settings), urfave.Flags()...),
 		Action:  run(settings),
 	}
 
@@ -50,14 +49,14 @@ func run(settings *plugin.Settings) cli.ActionFunc {
 	return func(ctx *cli.Context) error {
 		urfave.LoggingFromContext(ctx)
 
-		cacheFrom, ok := ctx.Generic("cache-from").(*drone.StringSliceFlag)
+		cacheFrom, ok := ctx.Generic("cache-from").(*plugin.StringSliceFlag)
 		if !ok {
 			return fmt.Errorf("%w: failed to read cache-from input", ErrTypeAssertionFailed)
 		}
 
 		settings.Build.CacheFrom = cacheFrom.Get()
 
-		secrets, ok := ctx.Generic("secrets").(*drone.StringSliceFlag)
+		secrets, ok := ctx.Generic("secrets").(*plugin.StringSliceFlag)
 		if !ok {
 			return fmt.Errorf("%w: failed to read secrets input", ErrTypeAssertionFailed)
 		}

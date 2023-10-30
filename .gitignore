@@ -1,5 +1,5 @@
-/dist/
 /release/
+/dist/
 /drone-docker-buildx*
 
 coverage.out

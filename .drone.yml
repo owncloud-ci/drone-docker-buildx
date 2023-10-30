@@ -1,5 +1,6 @@
 ---
 kind: pipeline
+type: docker
 name: test
 
 platform:
@@ -8,15 +9,23 @@ platform:
 
 steps:
   - name: deps
-    image: golang:1.20
+    image: docker.io/golang:1.21
     commands:
       - make deps
     volumes:
       - name: godeps
         path: /go
 
+  - name: generate
+    image: docker.io/golang:1.21
+    commands:
+      - make generate
+    volumes:
+      - name: godeps
+        path: /go
+
   - name: lint
-    image: golang:1.20
+    image: docker.io/golang:1.21
     commands:
       - make lint
     volumes:
@@ -24,7 +33,7 @@ steps:
         path: /go
 
   - name: test
-    image: golang:1.20
+    image: docker.io/golang:1.21
     commands:
       - make test
     volumes:
@@ -43,6 +52,7 @@ trigger:
 
 ---
 kind: pipeline
+type: docker
 name: build-binaries
 
 platform:
@@ -51,30 +61,24 @@ platform:
 
 steps:
   - name: build
-    image: techknowlogick/xgo:go-1.20.x
+    image: docker.io/techknowlogick/xgo:go-1.21.x
     commands:
       - ln -s /drone/src /source
       - make release
 
   - name: executable
-    image: alpine
+    image: docker.io/golang:1.21
     commands:
       - $(find dist/ -executable -type f -iname ${DRONE_REPO_NAME}-linux-amd64) --help
 
   - name: changelog-generate
-    image: thegeeklab/git-chglog
+    image: quay.io/owncloudci/git-chglog
     commands:
       - git fetch -tq
       - git-chglog --no-color --no-emoji -o CHANGELOG.md ${DRONE_TAG:---next-tag unreleased unreleased}
 
-  - name: changelog-format
-    image: thegeeklab/alpine-tools
-    commands:
-      - prettier CHANGELOG.md
-      - prettier -w CHANGELOG.md
-
   - name: publish
-    image: plugins/github-release
+    image: docker.io/plugins/github-release
     settings:
       api_key:
         from_secret: github_token
@@ -82,7 +86,7 @@ steps:
         - dist/*
       note: CHANGELOG.md
       overwrite: true
-      title: ${DRONE_TAG}
+      title: refs/heads/main
     when:
       ref:
         - refs/tags/**
@@ -98,6 +102,7 @@ depends_on:
 
 ---
 kind: pipeline
+type: docker
 name: build-container
 
 platform:
@@ -106,7 +111,7 @@ platform:
 
 steps:
   - name: dryrun
-    image: thegeeklab/drone-docker-buildx:23
+    image: docker.io/owncloudci/drone-docker-buildx:1
     settings:
       dockerfile: Dockerfile.multiarch
       dry_run: true
@@ -114,13 +119,13 @@ steps:
         - linux/amd64
         - linux/arm64
       provenance: false
-      repo: thegeeklab/${DRONE_REPO_NAME}
+      repo: owncloudci/${DRONE_REPO_NAME}
     when:
       ref:
         - refs/pull/**
 
-  - name: publish-dockerhub
-    image: thegeeklab/drone-docker-buildx:23
+  - name: publish
+    image: docker.io/owncloudci/drone-docker-buildx:1
     settings:
       auto_tag: true
       dockerfile: Dockerfile.multiarch
@@ -130,31 +135,9 @@ steps:
         - linux/amd64
         - linux/arm64
       provenance: false
-      repo: thegeeklab/${DRONE_REPO_NAME}
+      repo: owncloudci/${DRONE_REPO_NAME}
       username:
         from_secret: docker_username
-    when:
-      ref:
-        - refs/heads/main
-        - refs/tags/**
-    depends_on:
-      - dryrun
-
-  - name: publish-quay
-    image: thegeeklab/drone-docker-buildx:23
-    settings:
-      auto_tag: true
-      dockerfile: Dockerfile.multiarch
-      password:
-        from_secret: quay_password
-      platforms:
-        - linux/amd64
-        - linux/arm64
-      provenance: false
-      registry: quay.io
-      repo: quay.io/thegeeklab/${DRONE_REPO_NAME}
-      username:
-        from_secret: quay_username
     when:
       ref:
         - refs/heads/main
@@ -173,57 +156,7 @@ depends_on:
 
 ---
 kind: pipeline
-name: docs
-
-platform:
-  os: linux
-  arch: amd64
-
-concurrency:
-  limit: 1
-
-steps:
-  - name: markdownlint
-    image: thegeeklab/markdownlint-cli
-    commands:
-      - markdownlint 'docs/content/**/*.md' 'README.md' 'CONTRIBUTING.md'
-
-  - name: spellcheck
-    image: thegeeklab/alpine-tools
-    commands:
-      - spellchecker --files '_docs/**/*.md' 'README.md' 'CONTRIBUTING.md' -d .dictionary -p spell indefinite-article syntax-urls --no-suggestions
-    environment:
-      FORCE_COLOR: true
-      NPM_CONFIG_LOGLEVEL: error
-
-  - name: publish
-    image: thegeeklab/drone-git-action
-    settings:
-      action:
-        - pages
-      author_email: bot@thegeeklab.de
-      author_name: thegeeklab-bot
-      branch: docs
-      message: auto-update documentation
-      netrc_password:
-        from_secret: github_token
-      pages_directory: _docs/
-    when:
-      ref:
-        - refs/heads/main
-
-trigger:
-  ref:
-    - refs/heads/main
-    - refs/tags/**
-    - refs/pull/**
-
-depends_on:
-  - build-binaries
-  - build-container
-
----
-kind: pipeline
+type: docker
 name: notifications
 
 platform:
@@ -231,8 +164,8 @@ platform:
   arch: amd64
 
 steps:
-  - name: pushrm-dockerhub
-    image: chko/docker-pushrm:1
+  - name: pushrm
+    image: docker.io/chko/docker-pushrm:1
     environment:
       DOCKER_PASS:
         from_secret: docker_password
@@ -240,38 +173,10 @@ steps:
         from_secret: docker_username
       PUSHRM_FILE: README.md
       PUSHRM_SHORT: Drone plugin to build multiarch Docker images with buildx
-      PUSHRM_TARGET: thegeeklab/${DRONE_REPO_NAME}
+      PUSHRM_TARGET: owncloudci/${DRONE_REPO_NAME}
     when:
       status:
         - success
-
-  - name: pushrm-quay
-    image: chko/docker-pushrm:1
-    environment:
-      APIKEY__QUAY_IO:
-        from_secret: quay_token
-      PUSHRM_FILE: README.md
-      PUSHRM_TARGET: quay.io/thegeeklab/${DRONE_REPO_NAME}
-    when:
-      status:
-        - success
-
-  - name: matrix
-    image: thegeeklab/drone-matrix
-    settings:
-      homeserver:
-        from_secret: matrix_homeserver
-      password:
-        from_secret: matrix_password
-      roomid:
-        from_secret: matrix_roomid
-      template: "Status: **{{ .Build.Status }}**<br/> Build: [{{ .Repo.Owner }}/{{ .Repo.Name }}]({{ .Build.Link }}){{ if .Build.Branch }} ({{ .Build.Branch }}){{ end }} by {{ .Commit.Author }}<br/> Message: {{ .Commit.Message.Title }}"
-      username:
-        from_secret: matrix_username
-    when:
-      status:
-        - success
-        - failure
 
 trigger:
   ref:
@@ -282,10 +187,5 @@ trigger:
     - failure
 
 depends_on:
-  - docs
-
----
-kind: signature
-hmac: a62b604d49c98c24360bfaea313f8dba31166133620d5e7656f884e1f20b9ff6
-
-...
+  - build-binaries
+  - build-container

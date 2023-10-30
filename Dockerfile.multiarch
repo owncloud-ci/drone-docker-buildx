@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.20@sha256:741d6f9bcab778441efe05c8e4369d4f8ff56c9a635a97d77f55d8b0ec62f907 as build
+FROM --platform=$BUILDPLATFORM golang:1.21 as build
 
 ARG TARGETOS
 ARG TARGETARCH
@@ -10,12 +10,12 @@ RUN make build
 
 FROM docker:24.0-dind@sha256:020562d22f11c27997e00da910ed6b580d93094bc25841cb87aacab4ced4a882
 
-LABEL maintainer="Robert Kaussow <mail@thegeeklab.de>"
-LABEL org.opencontainers.image.authors="Robert Kaussow <mail@thegeeklab.de>"
+LABEL maintainer="ownCloud DevOps <devops@owncloud.com>"
+LABEL org.opencontainers.image.authors="ownCloud DevOps <devops@owncloud.com>"
 LABEL org.opencontainers.image.title="drone-docker-buildx"
-LABEL org.opencontainers.image.url="https://github.com/thegeeklab/drone-docker-buildx"
-LABEL org.opencontainers.image.source="https://github.com/thegeeklab/drone-docker-buildx"
-LABEL org.opencontainers.image.documentation="https://github.com/thegeeklab/drone-docker-buildx"
+LABEL org.opencontainers.image.url="https://github.com/owncloud-ci/drone-docker-buildx"
+LABEL org.opencontainers.image.source="https://github.com/owncloud-ci/drone-docker-buildx"
+LABEL org.opencontainers.image.documentation="https://github.com/owncloud-ci/drone-docker-buildx"
 
 ARG TARGETOS
 ARG TARGETARCH

@@ -1,3 +1,4 @@
+---
 linters:
   enable-all: false
   disable-all: true
@@ -71,9 +72,6 @@ linters:
     - promlinter
     - reassign
     - revive
-    # - rowserrcheck
-    # - sqlclosecheck
-    # - structcheck
     - stylecheck
     - tagliatelle
     - tenv
@@ -83,9 +81,13 @@ linters:
     - unconvert
     - unparam
     - usestdlibvars
-    # - wastedassign
     - whitespace
     - wsl
+    ## not working in golangci yet
+    # - rowserrcheck
+    # - sqlclosecheck
+    # - structcheck
+    # - wastedassign
   fast: false
 
 run:
@@ -94,4 +96,4 @@ run:
 linters-settings:
   gofumpt:
     extra-rules: true
-    lang-version: "1.20"
+    lang-version: "1.21"

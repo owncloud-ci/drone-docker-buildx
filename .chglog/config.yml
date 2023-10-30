@@ -2,7 +2,7 @@ style: github
 template: CHANGELOG.tpl.md
 info:
   title: CHANGELOG
-  repository_url: https://github.com/thegeeklab/drone-docker-buildx
+  repository_url: https://github.com/owncloud-ci/drone-docker-buildx
 options:
   commit_groups:
     title_maps:
