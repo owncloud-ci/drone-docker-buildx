@@ -14,6 +14,7 @@ Drone plugin to build multiarch Docker images with buildx. This plugin is a fork
 
 ```yaml
 kind: pipeline
+type: docker
 name: default
 
 steps:
