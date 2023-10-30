@@ -71,8 +71,8 @@ steps:
     commands:
       - $(find dist/ -executable -type f -iname ${DRONE_REPO_NAME}-linux-amd64) --help
 
-  - name: changelog-generate
-    image: quay.io/owncloudci/git-chglog
+  - name: changelog
+    image: quay.io/thegeeklab/git-chglog
     commands:
       - git fetch -tq
       - git-chglog --no-color --no-emoji -o CHANGELOG.md ${DRONE_TAG:---next-tag unreleased unreleased}
