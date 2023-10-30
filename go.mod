@@ -7,7 +7,7 @@ require (
 	github.com/drone-plugins/drone-plugin-lib v0.4.1
 	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.3
-	github.com/urfave/cli/v2 v2.25.5
+	github.com/urfave/cli/v2 v2.25.7
 	golang.org/x/sys v0.13.0
 )
 
