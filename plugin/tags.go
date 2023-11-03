@@ -55,7 +55,7 @@ func DefaultTags(ref string) ([]string, error) {
 		return []string{"latest"}, err
 	}
 
-	if version.PreRelease != "" || version.Metadata != "" {
+	if version.PreRelease != "" {
 		return []string{
 			version.String(),
 		}, nil

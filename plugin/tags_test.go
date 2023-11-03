@@ -33,7 +33,9 @@ func TestDefaultTags(t *testing.T) {
 		{"refs/tags/0.9.0", []string{"0.9", "0.9.0"}},
 		{"refs/tags/1.0.0", []string{"1", "1.0", "1.0.0"}},
 		{"refs/tags/v1.0.0", []string{"1", "1.0", "1.0.0"}},
+		{"refs/tags/v1.0.0+1", []string{"1", "1.0", "1.0.0"}},
 		{"refs/tags/v1.0.0-alpha.1", []string{"1.0.0-alpha.1"}},
+		{"refs/tags/v1.0.0-alpha", []string{"1.0.0-alpha"}},
 	}
 
 	for _, test := range tests {
