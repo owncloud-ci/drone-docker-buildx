@@ -100,7 +100,7 @@ steps:
     settings:
       dockerfile: Dockerfile.multiarch
       output: type=oci,dest=oci/${DRONE_REPO_NAME},tar=false
-      repo: owncloudops/${DRONE_REPO_NAME}
+      repo: owncloudci/${DRONE_REPO_NAME}
 
   - name: security-scan
     image: ghcr.io/aquasecurity/trivy
