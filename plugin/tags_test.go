@@ -36,6 +36,7 @@ func TestDefaultTags(t *testing.T) {
 		{"refs/tags/v1.0.0+1", []string{"1", "1.0", "1.0.0"}},
 		{"refs/tags/v1.0.0-alpha.1", []string{"1.0.0-alpha.1"}},
 		{"refs/tags/v1.0.0-alpha", []string{"1.0.0-alpha"}},
+		{"refs/tags/1.01.0", []string{"1", "1.1", "1.1.0"}},
 	}
 
 	for _, test := range tests {
@@ -117,8 +118,8 @@ func TestDefaultTagSuffix(t *testing.T) {
 			Suffix: "nanoserver",
 			After: []string{
 				"18-nanoserver",
-				"18.06-nanoserver",
-				"18.06.0-nanoserver",
+				"18.6-nanoserver",
+				"18.6.0-nanoserver",
 			},
 		},
 	}
