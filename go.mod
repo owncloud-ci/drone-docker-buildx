@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/coreos/go-semver v0.3.1
-	github.com/drone-plugins/drone-plugin-lib v0.4.1
+	github.com/drone-plugins/drone-plugin-lib v0.4.2
 	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/urfave/cli/v2 v2.25.7
