@@ -1,6 +1,6 @@
 module github.com/owncloud-ci/drone-docker-buildx
 
-go 1.21
+go 1.22
 
 require (
 	github.com/coreos/go-semver v0.3.1
