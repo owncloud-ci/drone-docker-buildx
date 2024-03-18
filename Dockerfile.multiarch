@@ -28,7 +28,7 @@ ENV DOCKER_HOST=unix:///var/run/docker.sock
 
 RUN apk --update add --virtual .build-deps curl && \
     apk --update add --no-cache git coredns && \
-    apk upgrade --no-cache libcrypto3 libssl3 && \
+    apk upgrade --no-cache libcrypto3 libssl3 libexpat && \
     mkdir -p /usr/lib/docker/cli-plugins/ && \
     curl -SsL -o /usr/lib/docker/cli-plugins/docker-buildx \
         "https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION##v}/buildx-v${BUILDX_VERSION##v}.${TARGETOS:-linux}-${TARGETARCH:-amd64}" && \
