@@ -8,7 +8,7 @@ WORKDIR /src
 
 RUN make build
 
-FROM docker.io/docker:25.0-dind@sha256:93529df8cf4b81a55dfe1a24828b775b5912307314783e64868acca36342f573
+FROM docker.io/docker:25.0-dind@sha256:19a2619f1285f127e20923578299cf42407c347872409fff6f8b90b386d5130f
 
 LABEL maintainer="ownCloud DevOps <devops@owncloud.com>"
 LABEL org.opencontainers.image.authors="ownCloud DevOps <devops@owncloud.com>"
@@ -28,7 +28,7 @@ ENV DOCKER_HOST=unix:///var/run/docker.sock
 
 RUN apk --update add --virtual .build-deps curl && \
     apk --update add --no-cache git coredns && \
-    apk upgrade --no-cache libcrypto3 libssl3 && \
+    apk upgrade --no-cache libcrypto3 libssl3 libexpat && \
     mkdir -p /usr/lib/docker/cli-plugins/ && \
     curl -SsL -o /usr/lib/docker/cli-plugins/docker-buildx \
         "https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION##v}/buildx-v${BUILDX_VERSION##v}.${TARGETOS:-linux}-${TARGETARCH:-amd64}" && \
