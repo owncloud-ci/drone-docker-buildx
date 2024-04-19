@@ -8,7 +8,7 @@ WORKDIR /src
 
 RUN make build
 
-FROM docker.io/docker:26.0-dind@sha256:6c14c5009447b4c0610880fd61cf8c2f7f50acf3e310ff1e2dd8413953067737
+FROM docker.io/docker:26.0-dind@sha256:12b3a58c977a087514382df904f2af4f24f958fbaee86e81ba3fb092a5baa880
 
 LABEL maintainer="ownCloud DevOps <devops@owncloud.com>"
 LABEL org.opencontainers.image.authors="ownCloud DevOps <devops@owncloud.com>"
