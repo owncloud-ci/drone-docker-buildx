@@ -8,7 +8,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/owncloud-ci/drone-docker-buildx/plugin"
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	"github.com/drone-plugins/drone-plugin-lib/urfave"
 )
